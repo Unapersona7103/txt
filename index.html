@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enviar Texto al Servidor</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 500px;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      padding: 30px;
+      text-align: center;
+    }
+
+    h2 {
+      color: #2c3e50;
+      margin-bottom: 20px;
+      font-size: 1.8rem;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 14px;
+      font-size: 16px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      outline: none;
+      transition: border-color 0.3s ease;
+    }
+
+    input[type="text"]:focus {
+      border-color: #3498db;
+    }
+
+    button {
+      margin-top: 16px;
+      padding: 12px 28px;
+      font-size: 16px;
+      background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(52, 152, 219, 0.3);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    #resultado {
+      margin-top: 20px;
+      font-size: 1rem;
+      padding: 10px;
+      border-radius: 6px;
+    }
+
+    .success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Enviar Texto</h2>
+    <input type="text" id="textInput" placeholder="Escribe algo aquí...">
+    <br>
+    <button onclick="enviarTexto()">Enviar</button>
+    <p id="resultado"></p>
+  </div>
+
+  <script>
+    async function enviarTexto() {
+      const input = document.getElementById('textInput');
+      const texto = input.value.trim();
+
+      if (!texto) {
+        mostrarResultado('Por favor, escribe algo antes de enviar.', 'error');
+        return;
+      }
+
+      try {
+        const respuesta = await fetch('https://mi-server-bkk1.onrender.com/datos', {  // Cambia esta ruta si es necesario
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ texto: texto })
+        });
+
+        if (respuesta.ok) {
+          mostrarResultado('✅ Enviado correctamente.', 'success');
+        } else {
+          mostrarResultado('❌ Error en el servidor.', 'error');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        mostrarResultado('❌ No se pudo enviar.', 'error');
+      }
+    }
+
+    function mostrarResultado(mensaje, tipo) {
+      const resultado = document.getElementById('resultado');
+      resultado.innerText = mensaje;
+      resultado.className = tipo;
+    }
+  </script>
+</body>
+</html>
